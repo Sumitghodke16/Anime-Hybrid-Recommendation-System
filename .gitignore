@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+myenv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large Model Files
+*.pkl
+*.joblib
+*.h5
+*.pt
+
+# Streamlit Cache
+.streamlit/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
