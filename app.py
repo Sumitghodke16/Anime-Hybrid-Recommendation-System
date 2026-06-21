@@ -4,6 +4,7 @@ import pickle
 import html
 import base64
 import os
+from huggingface_hub import hf_hub_download
 
 # =====================================================
 # PAGE CONFIG  (must be FIRST streamlit call)
@@ -381,11 +382,30 @@ div[data-testid="stStatusWidget"] {{
 # LOAD DATA
 # =====================================================
 
-@st.cache_resource(show_spinner="Loading recommendation engine…")
+@st.cache_resource(show_spinner="Loading recommendation engine...")
 def load_data():
-    anime_df   = pickle.load(open("anime_data.pkl",  "rb"))
-    cosine_sim = pickle.load(open("cosine_sim.pkl",  "rb"))
-    indices    = pickle.load(open("indices.pkl",     "rb"))
+
+    anime_data_path = hf_hub_download(
+        repo_id="Sumitghodke74kg/anime-hybrid-model-files",
+        filename="anime_data.pkl",
+        repo_type="dataset"
+    )
+
+    cosine_path = hf_hub_download(
+        repo_id="Sumitghodke74kg/anime-hybrid-model-files",
+        filename="cosine_sim.pkl",
+        repo_type="dataset"
+    )
+
+    indices_path = hf_hub_download(
+        repo_id="Sumitghodke74kg/anime-hybrid-model-files",
+        filename="indices.pkl",
+        repo_type="dataset"
+    )
+
+    anime_df = pickle.load(open(anime_data_path, "rb"))
+    cosine_sim = pickle.load(open(cosine_path, "rb"))
+    indices = pickle.load(open(indices_path, "rb"))
 
     anime_df["_search"] = (
         anime_df["name"]
@@ -397,13 +417,21 @@ def load_data():
 
     if "rating_score" not in anime_df.columns:
         r = anime_df["rating"].fillna(0)
-        anime_df["rating_score"] = (r - r.min()) / (r.max() - r.min() + 1e-9)
+        anime_df["rating_score"] = (
+            (r - r.min()) /
+            (r.max() - r.min() + 1e-9)
+        )
 
     if "popularity_score" not in anime_df.columns:
         import numpy as np
+
         m = anime_df["members"]
         log_m = np.log1p(m.clip(lower=1))
-        anime_df["popularity_score"] = (log_m - log_m.min()) / (log_m.max() - log_m.min() + 1e-9)
+
+        anime_df["popularity_score"] = (
+            (log_m - log_m.min()) /
+            (log_m.max() - log_m.min() + 1e-9)
+        )
 
     return anime_df, cosine_sim, indices
 
