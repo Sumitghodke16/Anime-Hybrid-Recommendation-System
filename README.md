@@ -15,6 +15,9 @@ https://anime-hybrid-recommendation-system.streamlit.app/
 
 ![Recommendation Results](web_view.png)
 
+### Hugging Face Files
+![Pkl Files](Hugging_face_view.png)
+
 ### Project Structure
 
 ![Project Structure](foldersize.png)
